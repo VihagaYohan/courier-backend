@@ -4,6 +4,9 @@ const morgan = require("morgan");
 const dotenv = require("dotenv");
 const colors = require("colors");
 
+// load env vars
+dotenv.config({ path: "./config/config.env" });
+
 // middleware
 const errorHandler = require("./middleware/errorHandler");
 
