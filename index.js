@@ -3,10 +3,18 @@ const path = require("path");
 const morgan = require("morgan");
 const dotenv = require("dotenv");
 const colors = require("colors");
+
+// middleware
 const errorHandler = require("./middleware/errorHandler");
+
+// import DB connection
+const connectDB = require("./config/db");
 
 const app = express();
 app.use(express.json());
+
+// connect to database
+connectDB();
 
 // logging for dev enviontment
 if (process.env.NODE_ENV === "development") {
