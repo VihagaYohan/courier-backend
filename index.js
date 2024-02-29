@@ -15,6 +15,7 @@ const app = express();
 
 // route files
 const courierTypes = require("./routes/courierTypes");
+const packageTypes = require("./routes/packageTypes");
 
 // body pharser
 app.use(express.json());
@@ -26,6 +27,7 @@ if (process.env.NODE_ENV === "development") {
 
 // mount routers
 app.use("/api/v1/courierTypes", courierTypes);
+app.use("/api/v1/packageTypes", packageTypes);
 
 const PORT = process.env.PORT || 5000;
 
