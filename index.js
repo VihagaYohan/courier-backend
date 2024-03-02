@@ -18,6 +18,7 @@ const app = express();
 const courierTypes = require("./routes/courierTypes");
 const packageTypes = require("./routes/packageTypes");
 const userRoleTypes = require("./routes/userRoles");
+const auth = require("./routes/auth");
 
 // body pharser
 app.use(express.json());
@@ -31,6 +32,7 @@ if (process.env.NODE_ENV === "development") {
 app.use("/api/v1/courierTypes", courierTypes);
 app.use("/api/v1/packageTypes", packageTypes);
 app.use("/api/v1/userRoles", userRoleTypes);
+app.use("/api/v1/auth", auth);
 
 // error handler middleware
 app.use(errorHandler);
