@@ -59,6 +59,10 @@ const userSchema = new mongoose.Schema(
           expiresIn: process.env.JWT_EXPIRE,
         });
       },
+      // compare the provided password with hashed password in database
+      async matchPassword(enteredPassword) {
+        return await bcrypt.compare(enteredPassword, this.password);
+      },
     },
   }
 );
@@ -91,8 +95,23 @@ const validationUser = (user) => {
   return schema.validate(user);
 };
 
+// validation for user login
+const validationLogin = (payload) => {
+  const schema = Joi.object({
+    email: Joi.string()
+      .email({
+        minDomainSegments: 2,
+        tlds: { allow: ["com", "net"] },
+      })
+      .required(),
+    password: Joi.string().required(),
+  });
+  return schema.validate(payload);
+};
+
 module.exports = {
   User,
   userSchema,
   validationUser,
+  validationLogin,
 };
