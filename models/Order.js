@@ -4,60 +4,50 @@ Joi.objectId = require("joi-objectid")(Joi);
 
 const geocoder = require("../utility/geocoder");
 const { array } = require("joi");
+const { senderSchema } = require("./Sender");
+const { receiverSchema } = require("./Receiver");
+const { paymentSchema } = require("./PaymentType");
 
 const orderSchema = mongoose.Schema({
-  shopId: {
+  statusId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Shop",
+    ref: "CourierStates",
     required: true,
   },
-  customerId: {
+  riderId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
   },
-  orderItems: {
-    type: [],
+  courierTypeId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "CourierType",
+  },
+  packageTypeId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "PackageType",
+  },
+  packageSize: {
+    type: String,
+    enum: ["small", "medium", "large"],
+    default: "small",
+    required: true,
+  },
+  senderDetails: {
+    type: senderSchema,
+    default: {},
+  },
+  receiverDetails: {
+    type: receiverSchema,
+    default: {},
   },
   orderTotal: {
     type: Number,
     min: 0,
   },
-  address: {
-    type: String,
-    type: String,
-    required: [true, "Please add an address"],
-    maxlength: [255, "Address can not be more than 255 characters"],
-  },
-  location: {
-    // GeoJSON point
-    type: {
-      type: String,
-      enum: ["Point"],
-    },
-    coordinates: {
-      type: [Number],
-      index: "2dsphere",
-    },
-    formatedAddress: String,
-    street: String,
-    city: String,
-    state: String,
-    zipcode: String,
-    country: String,
-  },
-  contactNo: {
-    type: [String],
-    required: true,
-  },
-  orderType: {
-    type: String,
-    enum: ["Cash", "Card"],
-    required: true,
-  },
-  orderStatus: {
-    type: String,
-    default: "Order Placed",
+  paymentType: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "PaymentType",
     required: true,
   },
   createdOn: {
