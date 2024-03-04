@@ -3,7 +3,7 @@ const { removeDoubleQuotations } = require("../utils/Helper");
 const errorHandler = (error, req, res, next) => {
   if (process.env.NODE_ENV === "development") {
     // log to console for the dev
-    console.log(error.stack);
+    // console.log(error.stack);
   }
 
   // remove quoations from message

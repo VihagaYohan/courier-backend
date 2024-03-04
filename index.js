@@ -18,6 +18,9 @@ const app = express();
 const courierTypes = require("./routes/courierTypes");
 const packageTypes = require("./routes/packageTypes");
 const userRoleTypes = require("./routes/userRoles");
+const auth = require("./routes/auth");
+const courierStates = require("./routes/courierStatus");
+const paymentTypes = require("./routes/paymentType");
 
 // body pharser
 app.use(express.json());
@@ -31,6 +34,9 @@ if (process.env.NODE_ENV === "development") {
 app.use("/api/v1/courierTypes", courierTypes);
 app.use("/api/v1/packageTypes", packageTypes);
 app.use("/api/v1/userRoles", userRoleTypes);
+app.use("/api/v1/auth", auth);
+app.use("/api/v1/courierStates", courierStates);
+app.use("/api/v1/paymentTypes", paymentTypes);
 
 // error handler middleware
 app.use(errorHandler);
