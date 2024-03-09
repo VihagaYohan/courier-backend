@@ -1,9 +1,10 @@
 const mongoose = require("mongoose");
-const joi = require("joi");
+const Joi = require("joi");
+const geocoder = require("../utils/geoCoder");
 Joi.objectId = require("joi-objectid")(Joi);
 
 const senderSchema = new mongoose.Schema({
-  _id: {
+  senderId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
     trim: true,
@@ -67,10 +68,25 @@ const senderSchema = new mongoose.Schema({
   },
 });
 
+// geo-code & create location field
+senderSchema.pre("save", async function (next) {
+  const loc = await geocoder.geocode(this.address);
+  this.location = {
+    type: "Point",
+    coordinates: [loc[0].longitude, loc[0].latitude],
+    formatedAddress: loc[0].formattedAddress,
+    street: loc[0].streetName,
+    city: loc[0].city,
+    state: loc[0].state,
+    zipcode: loc[0].zipcode,
+    country: loc[0].country,
+  };
+});
+
 // input validation
 const senderValidation = (data) => {
   const schema = Joi.objectId({
-    _id: Joi.objectId().required(),
+    senderId: Joi.objectId().required(),
     name: Joi.string().required(),
     email: Joi.string().email({
       minDomainSegments: 2,
@@ -78,9 +94,12 @@ const senderValidation = (data) => {
     }),
     pickUpDate: Joi.date().greater("1-1-1990"),
     pickUpTime: Joi.string().reuqired(),
+    mobileNumber: Joi.string().required(),
     address: Joi.string().max(255).required(),
     senderNotes: Joi.string(),
   });
+  console.log("sender validation");
+  return schema.validate(data);
 };
 
 const Sender = mongoose.model("Sender", senderSchema);

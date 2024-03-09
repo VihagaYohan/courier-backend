@@ -21,6 +21,7 @@ const userRoleTypes = require("./routes/userRoles");
 const auth = require("./routes/auth");
 const courierStates = require("./routes/courierStatus");
 const paymentTypes = require("./routes/paymentType");
+const orders = require("./routes/order");
 
 // body pharser
 app.use(express.json());
@@ -37,6 +38,7 @@ app.use("/api/v1/userRoles", userRoleTypes);
 app.use("/api/v1/auth", auth);
 app.use("/api/v1/courierStates", courierStates);
 app.use("/api/v1/paymentTypes", paymentTypes);
+app.use("/api/v1/orders", orders);
 
 // error handler middleware
 app.use(errorHandler);
