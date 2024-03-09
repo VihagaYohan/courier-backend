@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 const Joi = require("joi");
 Joi.objectId = require("joi-objectid")(Joi);
 
-const geocoder = require("../utility/geocoder");
 const { array } = require("joi");
 const { senderSchema } = require("./Sender");
 const { receiverSchema } = require("./Receiver");
@@ -17,7 +16,7 @@ const orderSchema = mongoose.Schema({
   riderId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: true,
+    required: false,
   },
   courierTypeId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -40,7 +39,7 @@ const orderSchema = mongoose.Schema({
   receiverDetails: {
     type: receiverSchema,
     default: {},
-  },
+  } /* */,
   orderTotal: {
     type: Number,
     min: 0,
@@ -57,7 +56,7 @@ const orderSchema = mongoose.Schema({
 });
 
 // geo-coder and create location field
-orderSchema.pre("save", async function (next) {
+/* orderSchema.pre("save", async function (next) {
   const loc = await geocoder.geocode(this.address);
   this.location = {
     type: "Point",
@@ -75,10 +74,10 @@ orderSchema.pre("save", async function (next) {
 orderSchema.post("update", async function (next) {
   console.log("update one worked");
   next();
-});
+}); */
 
 // input validation
-const orderValidation = (order) => {
+/* const orderValidation = (order) => {
   const schema = Joi.object({
     shopId: Joi.objectId().required(),
     customerId: Joi.objectId().required(),
@@ -97,10 +96,31 @@ const orderValidation = (order) => {
     orderType: Joi.string().required(),
   });
   return schema.validate(order);
+}; */
+
+const orderValidation = (order) => {
+  const schema = Joi.object({
+    statusId: Joi.objectId().required(),
+    courierTypeId: Joi.objectId().required(),
+    packageTypeId: Joi.objectId().required(),
+    packageSize: Joi.string(),
+    senderDetails: Joi.required(),
+    receiverDetails: Joi.required(),
+    orderTotal: Joi.number(),
+    paymentType: Joi.objectId().required(),
+  });
+  return schema.validate(order);
 };
 
 const Order = new mongoose.model("Order", orderSchema);
 
-exports.Order = Order;
+module.exports = {
+  Order,
+  orderValidation,
+  orderSchema,
+};
+
+/* exports.Order = Order;
 exports.OrderSchema = orderSchema;
 exports.orderValidation = orderValidation;
+ */
