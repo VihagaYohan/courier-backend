@@ -15,6 +15,12 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
     return;
   }
 
+  // check if user email address already exists in database
+  let userExits = await User.findOne({ email: req.body.email });
+  if (userExits) {
+    return next(new ErrorResponse("Email already exists", 400));
+  }
+
   // encrypt password
   const salt = await bcrypt.genSalt(10);
   req.body.password = await bcrypt.hash(req.body.password, salt);

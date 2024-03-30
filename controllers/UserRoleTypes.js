@@ -2,6 +2,8 @@ const { UserRole, userRoleValidation } = require("../models/UserRoles");
 const ErrorResponse = require("../utils/ErrorResponse");
 const SuccessResponse = require("../utils/SuccessResponse");
 const asyncHandler = require("../middleware/asyncHandler");
+const axios = require("axios");
+const os = require("os");
 
 // @desc        Get all user roles
 // @route       GET /api/v1/userRoles
@@ -45,3 +47,9 @@ exports.addNewUserRole = asyncHandler(async (req, res, next) => {
     .status(201)
     .json(new SuccessResponse(true, "New user role has been added", 201, role));
 });
+
+// get user role id based on user role name
+exports.getUserRoleId = async (userRoleName) => {
+  const userRoles = await UserRole.find({ name: userRoleName });
+  return userRoles;
+};
