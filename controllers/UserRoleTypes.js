@@ -50,6 +50,6 @@ exports.addNewUserRole = asyncHandler(async (req, res, next) => {
 
 // get user role id based on user role name
 exports.getUserRoleId = async (userRoleName) => {
-  const userRoles = await UserRole.find({ name: userRoleName });
+  const userRoles = await UserRole.findOne({ name: userRoleName });
   return userRoles;
 };
