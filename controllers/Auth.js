@@ -3,6 +3,7 @@ const ErrorResponse = require("../utils/ErrorResponse");
 const SuccessResponse = require("../utils/SuccessResponse");
 const asyncHandler = require("../middleware/asyncHandler");
 const bcrypt = require("bcryptjs");
+const { getUserRoleId } = require("./UserRoleTypes");
 
 // @desc        Register a new user
 // @route       POST /api/v1/auth/register
@@ -15,9 +16,25 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
     return;
   }
 
+  // check if user email address already exists in database
+  let userExits = await User.findOne({ email: req.body.email });
+  if (userExits) {
+    return next(new ErrorResponse("Email already exists", 400));
+  }
+
   // encrypt password
   const salt = await bcrypt.genSalt(10);
   req.body.password = await bcrypt.hash(req.body.password, salt);
+
+  // spread req.body to userObj
+  const userObj = { ...req.body };
+
+  // check for user type
+  // this condition only applies to end-users. And the user role by default set to "user"
+  if (req.body.role) {
+    const role = await getUserRoleId("user");
+    userObj.role = role[0]._id;
+  }
 
   const user = await User.create(req.body);
   // create token
