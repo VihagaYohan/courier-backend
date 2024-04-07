@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
+Joi.objectId = require("joi-objectid")(Joi);
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
@@ -37,8 +38,11 @@ const userSchema = new mongoose.Schema(
       unieq: true,
     },
     role: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "UserRole",
+      /* type: mongoose.Schema.Types.ObjectId,
+      ref: "UserRole", */
+      type: String,
+      enum: ["user", "rider", "executive", "manager", "admin"],
+      default: "user",
     },
     resetPasswordToken: {
       type: String,
@@ -87,7 +91,7 @@ const validationUser = (user) => {
         tlds: { allow: ["com", "net"] },
       })
       .required(),
-    role: Joi.string().required(),
+    role: Joi.string(),
     password: Joi.string().required().min(4),
     phoneNumber: Joi.string().required().max(10),
   });

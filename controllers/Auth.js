@@ -29,13 +29,6 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
   // spread req.body to userObj
   const userObj = { ...req.body };
 
-  // check for user type
-  // this condition only applies to end-users. And the user role by default set to "user"
-  if (req.body.role) {
-    const role = await getUserRoleId("user");
-    userObj.role = role[0]._id;
-  }
-
   const user = await User.create(req.body);
   // create token
   const token = user.getSignedJwtToken();
@@ -81,3 +74,6 @@ exports.loginUser = asyncHandler(async (req, res, next) => {
     })
   );
 });
+
+// @desc        Forgot password
+// @route

@@ -1,8 +1,10 @@
 const { Sender, senderValidation } = require("../models/Sender");
 const { Receiver, receiverValidation } = require("../models/Receiver");
 const { Order, orderValidation } = require("../models/Order");
+const CourierStates = require("../models/CourierStates");
 const asyncHandler = require("../middleware/asyncHandler");
 const ErrorResponse = require("../utils/ErrorResponse");
+const OrderStatus = require("../constants/orderStates");
 
 // @desc        Add new orders
 // @route       POST /api/v1/orders
@@ -31,12 +33,21 @@ exports.addOrder = asyncHandler(async (req, res, next) => {
   }*/
 
   const { error } = orderValidation(req.body);
-  console.log(error);
   if (error) {
     next(new ErrorResponse("Please provide valid details", 400));
   }
 
-  let order = await Order.create(req.body);
+  // check for the order placed status
+  let statusList = await CourierStates.find({ name: OrderStatus.orderPlaced });
+  console.log(statusList);
+
+  // spread body to order body
+  const orderObj = { ...req.body };
+  // assign default status id
+  orderObj.statusId = statusList[0]?._id;
+  console.log(orderObj);
+
+  let order = await Order.create(orderObj);
 
   return res.status(200).json({
     success: true,
