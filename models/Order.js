@@ -11,7 +11,7 @@ const orderSchema = mongoose.Schema({
   statusId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "CourierStates",
-    required: true,
+    required: false,
   },
   riderId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -100,7 +100,7 @@ orderSchema.post("update", async function (next) {
 
 const orderValidation = (order) => {
   const schema = Joi.object({
-    statusId: Joi.objectId().required(),
+    statusId: Joi.objectId(),
     courierTypeId: Joi.objectId().required(),
     packageTypeId: Joi.objectId().required(),
     packageSize: Joi.string(),
