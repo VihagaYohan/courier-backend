@@ -1,4 +1,7 @@
 const { PackageType } = require("../models/PackageType");
+const asyncHandler = require("../middleware/asyncHandler");
+const ErrorResponse = require("../utils/ErrorResponse");
+const SuccessResponse = require("../utils/SuccessResponse");
 
 // @desc    Get all package types
 // @route   GET /api/v1/packageTypes
@@ -11,6 +14,19 @@ exports.getAllPackageTypes = async (req, res, next) => {
     data: types,
   });
 };
+
+// @desc    Get package type by id
+// @route   GET /api/v1/packageTypes/id
+// @access  Public
+exports.getPackageTypeById = asyncHandler(async (req, res, next) => {
+  const packageType = await PackageType.findById(req.params.id);
+  if (!packageType) {
+    return next(new ErrorResponse("Unable to locate package type", 404));
+  }
+  return res
+    .status(200)
+    .json(new SuccessResponse(true, "Package type found", 200, packageType));
+});
 
 // @desc    Add a new package type
 // @route   POST /api/v1/packageTypes

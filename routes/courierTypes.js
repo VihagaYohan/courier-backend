@@ -4,6 +4,7 @@ const {
   addCourierType,
   updateCourierType,
   deleteCourierType,
+  getCourierTypeById,
 } = require("../controllers/CourierTypes");
 const { protect } = require("../middleware/authHandler");
 
@@ -11,6 +12,10 @@ const router = express.Router();
 
 router.route("/").get(getAllCourierTypes).post(protect, addCourierType);
 
-router.route("/:id").put(updateCourierType).delete(protect, deleteCourierType);
+router
+  .route("/:id")
+  .get(getCourierTypeById)
+  .put(updateCourierType)
+  .delete(protect, deleteCourierType);
 
 module.exports = router;

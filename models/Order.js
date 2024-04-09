@@ -100,7 +100,8 @@ orderSchema.post("update", async function (next) {
 
 const orderValidation = (order) => {
   const schema = Joi.object({
-    statusId: Joi.objectId(),
+    // statusId: Joi.objectId(),
+    statusId: Joi.optional(),
     courierTypeId: Joi.objectId().required(),
     packageTypeId: Joi.objectId().required(),
     packageSize: Joi.string(),
