@@ -1,4 +1,7 @@
 const CourierType = require("../models/CourierType");
+const asyncHandler = require("../middleware/asyncHandler");
+const ErrorResponse = require("../utils/ErrorResponse");
+const SuccessResponse = require("../utils/SuccessResponse");
 
 // @desc    Get all courier types
 // @route   GET /api/v1/courierTypes
@@ -11,6 +14,20 @@ exports.getAllCourierTypes = async (req, res, next) => {
     data: types,
   });
 };
+
+// @desc    Get courier type by id
+// @route   GET /api/v1/courierTypes/id
+// @access  Public
+exports.getCourierTypeById = asyncHandler(async (req, res, next) => {
+  const courierType = await CourierType.findById(req.params.id);
+  if (!courierType) {
+    return next(new ErrorResponse("Unable to locate courier type", 404));
+  }
+
+  return res
+    .status(200)
+    .json(new SuccessResponse(true, "Courier type found", 200, courierType));
+});
 
 // @desc    Add courier type
 // @route   POST /api/v1/courierTypes
