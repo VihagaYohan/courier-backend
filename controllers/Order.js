@@ -17,7 +17,30 @@ exports.getAllOrders = asyncHandler(async (req, res, next) => {
   } else {
     return res
       .status(200)
-      .json(new SuccessResponse(true, "Fetch all courier orders", 200, orders));
+      .json(
+        new SuccessResponse(true, "Fetched all courier orders", 200, orders)
+      );
+  }
+});
+
+// @desc        Get all orders for a specific user
+// @route       GET /api/v1/orders/user/id
+// @access      Private
+exports.getAllOrdersForUser = asyncHandler(async (req, res, next) => {
+  const orders = await Order.find({ "senderDetails._id": req.params.id });
+  if (orders.length == 0) {
+    next(new ErrorResponse("There are no orders at the moment", 404));
+  } else {
+    return res
+      .status(200)
+      .json(
+        new SuccessResponse(
+          true,
+          `Fetched all courier orders for ${req.params.id}`,
+          200,
+          orders
+        )
+      );
   }
 });
 
