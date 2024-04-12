@@ -27,7 +27,7 @@ exports.getAllOrders = asyncHandler(async (req, res, next) => {
 // @route       GET /api/v1/orders/user/id
 // @access      Private
 exports.getAllOrdersForUser = asyncHandler(async (req, res, next) => {
-  const orders = await Order.find({ "senderDetails._id": req.params.id });
+  const orders = await Order.find({ "senderDetails.senderId": req.params.id });
   if (orders.length == 0) {
     next(new ErrorResponse("There are no orders at the moment", 404));
   } else {
