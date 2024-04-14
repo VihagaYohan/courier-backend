@@ -8,21 +8,21 @@ const { receiverSchema } = require("./Receiver");
 const { paymentSchema } = require("./PaymentType");
 
 const orderSchema = mongoose.Schema({
-  statusId: {
+  status: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "CourierStates",
     required: false,
   },
-  riderId: {
+  rider: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: false,
   },
-  courierTypeId: {
+  courierType: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "CourierType",
   },
-  packageTypeId: {
+  packageType: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "PackageType",
   },
