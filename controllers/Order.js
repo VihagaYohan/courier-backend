@@ -30,11 +30,12 @@ exports.getAllOrdersForUser = asyncHandler(async (req, res, next) => {
   const orders = await Order.find({
     "senderDetails.senderId": req.params.id,
   })
-    .populate("statusId", "-createdAt")
-    .populate("riderId")
-    .populate("courierTypeId", "-createdAt")
-    .populate("packageTypeId", "_id, name")
-    .populate("paymentType", "-createdAt");
+    .populate("status", "-__v")
+    .populate("rider")
+    .populate("courierType", "_id, name")
+    .populate("packageType", "_id, name")
+    .populate("paymentType", "_id, name ")
+    .sort({ createdOn: -1 });
   if (orders.length == 0) {
     next(new ErrorResponse("There are no orders at the moment", 404));
   } else {
