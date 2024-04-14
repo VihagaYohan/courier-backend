@@ -100,3 +100,26 @@ exports.addOrder = asyncHandler(async (req, res, next) => {
     });
   }
 });
+
+// @desc        Get order status for a specific order
+// @route       GET /api/v1/orders/status/:id
+// @access      Private
+exports.getOrderStatusUpdate = asyncHandler(async (req, res, next) => {
+  let order = await Order.find({ _id: req.params.id }).populate(
+    "status",
+    "_id, name"
+  );
+
+  if (order.length == 0) {
+    next(
+      new ErrorResponse(
+        `Unable to locate order for given order Id ${req.params.id}`,
+        404
+      )
+    );
+  } else {
+    return res
+      .status(200)
+      .json(new SuccessResponse(true, "Fetched order status", 200, order));
+  }
+});
