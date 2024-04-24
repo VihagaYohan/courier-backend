@@ -52,6 +52,35 @@ exports.getAllOrdersForUser = asyncHandler(async (req, res, next) => {
   }
 });
 
+// @desc        Get all orders for a specific rider
+// @route       GET /api/v1/orders/user/id/rider
+// @access      Private
+exports.getAllOrdersForRider = asyncHandler(async (req, res, next) => {
+  const orders = await Order.find({
+    rider: req.params.id,
+  })
+    .populate("status", "-__v")
+    .populate("rider")
+    .populate("courierType", "_id, name")
+    .populate("packageType", "_id, name")
+    .populate("paymentType", "_id, name ")
+    .sort({ createdOn: -1 });
+  if (Order.length == 0) {
+    next(new ErrorResponse("There are no orders at the moment", 401));
+  } else {
+    return res
+      .status(200)
+      .json(
+        new SuccessResponse(
+          true,
+          `Fetched all orders for rider ${req.params.id}`,
+          200,
+          orders
+        )
+      );
+  }
+});
+
 // @desc        Add new orders
 // @route       POST /api/v1/orders
 // @access      Public
