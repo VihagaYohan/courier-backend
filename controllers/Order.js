@@ -52,6 +52,35 @@ exports.getAllOrdersForUser = asyncHandler(async (req, res, next) => {
   }
 });
 
+// @desc        Get all orders for a specific rider
+// @route       GET /api/v1/orders/user/id/rider
+// @access      Private
+exports.getAllOrdersForRider = asyncHandler(async (req, res, next) => {
+  const orders = await Order.find({
+    rider: req.params.id,
+  })
+    .populate("status", "-__v")
+    .populate("rider")
+    .populate("courierType", "_id, name")
+    .populate("packageType", "_id, name")
+    .populate("paymentType", "_id, name ")
+    .sort({ createdOn: -1 });
+  if (Order.length == 0) {
+    next(new ErrorResponse("There are no orders at the moment", 401));
+  } else {
+    return res
+      .status(200)
+      .json(
+        new SuccessResponse(
+          true,
+          `Fetched all orders for rider ${req.params.id}`,
+          200,
+          orders
+        )
+      );
+  }
+});
+
 // @desc        Add new orders
 // @route       POST /api/v1/orders
 // @access      Public
@@ -98,5 +127,28 @@ exports.addOrder = asyncHandler(async (req, res, next) => {
       success: true,
       data: order,
     });
+  }
+});
+
+// @desc        Get order status for a specific order
+// @route       GET /api/v1/orders/status/:id
+// @access      Private
+exports.getOrderStatusUpdate = asyncHandler(async (req, res, next) => {
+  let order = await Order.find({ _id: req.params.id }).populate(
+    "status",
+    "_id, name"
+  );
+
+  if (order.length == 0) {
+    next(
+      new ErrorResponse(
+        `Unable to locate order for given order Id ${req.params.id}`,
+        404
+      )
+    );
+  } else {
+    return res
+      .status(200)
+      .json(new SuccessResponse(true, "Fetched order status", 200, order));
   }
 });
