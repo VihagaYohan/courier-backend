@@ -5,12 +5,17 @@ const {
   getAllOrdersForUser,
   getOrderStatusUpdate,
   getAllOrdersForRider,
+  updateOrder,
 } = require("../controllers/Order");
 const { protect } = require("../middleware/authHandler");
 
 const router = express.Router();
 
-router.route("/").get(protect, getAllOrders).post(protect, addOrder);
+router
+  .route("/")
+  .get(protect, getAllOrders)
+  .post(protect, addOrder)
+  .put(protect, updateOrder);
 
 router.route("/user/:id").get(protect, getAllOrdersForUser);
 

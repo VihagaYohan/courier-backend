@@ -24,3 +24,14 @@ exports.createCourierState = asyncHandler(async (req, res, next) => {
     .status(201)
     .json(new SuccessResponse(true, "New courier status created", 201, state));
 });
+
+// @desc    Get courier status by id
+// @route   GET / api/v1/states
+// @access  Public
+exports.getCourierStatusById = asyncHandler(async (req, res, next) => {
+  const state = await CourierStates.create(req.params);
+
+  return res
+    .status(200)
+    .json(new SuccessResponse(true, "Courier status found", 200, state));
+});
