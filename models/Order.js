@@ -26,6 +26,11 @@ const orderSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "PackageType",
   },
+  trackingId: {
+    type: String,
+    unique: true,
+    minLength: 4,
+  },
   packageSize: {
     type: String,
     enum: ["small", "medium", "large"],
@@ -71,7 +76,7 @@ const orderSchema = mongoose.Schema({
   next();
 });
 
-orderSchema.post("update", async function (next) {
+ orderSchema.post("update", async function (next) {
   console.log("update one worked");
   next();
 }); */
@@ -102,13 +107,15 @@ const orderValidation = (order) => {
   const schema = Joi.object({
     // statusId: Joi.objectId(),
     statusId: Joi.optional(),
-    courierTypeId: Joi.objectId().required(),
-    packageTypeId: Joi.objectId().required(),
+    courierType: Joi.objectId().required(),
+    packageType: Joi.objectId().required(),
     packageSize: Joi.string(),
     senderDetails: Joi.required(),
     receiverDetails: Joi.required(),
     orderTotal: Joi.number(),
     paymentType: Joi.objectId().required(),
+    status: Joi.objectId(),
+    rider: Joi.objectId(),
   });
   return schema.validate(order);
 };

@@ -6,6 +6,7 @@ const asyncHandler = require("../middleware/asyncHandler");
 const ErrorResponse = require("../utils/ErrorResponse");
 const SuccessResponse = require("../utils/SuccessResponse");
 const OrderStatus = require("../constants/orderStates");
+const { generateId } = require("../utils/Helper");
 
 // @desc        Get all orders
 // @route       GET /api/v1/orders
@@ -60,7 +61,7 @@ exports.getAllOrdersForRider = asyncHandler(async (req, res, next) => {
     rider: req.params.id,
   })
     .populate("status", "-__v")
-    .populate("rider")
+    .populate("rider", "-__v")
     .populate("courierType", "_id, name")
     .populate("packageType", "_id, name")
     .populate("paymentType", "_id, name ")
@@ -109,6 +110,7 @@ exports.addOrder = asyncHandler(async (req, res, next) => {
 
   const { error } = orderValidation(req.body);
   if (error) {
+    console.log(error);
     next(new ErrorResponse("Please provide valid details", 400));
   } else {
     // check for the order placed status
@@ -120,6 +122,11 @@ exports.addOrder = asyncHandler(async (req, res, next) => {
     const orderObj = { ...req.body };
     // assign default status id
     orderObj.statusId = statusList[0]?._id;
+
+    // assign order tracking Id
+    orderObj.trackingId = generateId().toString();
+
+    console.log(orderObj);
 
     let order = await Order.create(orderObj);
 
@@ -151,4 +158,24 @@ exports.getOrderStatusUpdate = asyncHandler(async (req, res, next) => {
       .status(200)
       .json(new SuccessResponse(true, "Fetched order status", 200, order));
   }
+});
+
+// @desc        Update order
+// @route       PUT /api/v1/orders
+// @access      Private
+exports.updateOrder = asyncHandler(async (req, res, next) => {
+  const result = await Order.findByIdAndUpdate(req.body.id, {
+    status: req.body.status.id,
+  });
+
+  return res
+    .status(200)
+    .json(
+      new SuccessResponse(
+        true,
+        `Courier # ${req.body.id} has been updated`,
+        200,
+        result
+      )
+    );
 });

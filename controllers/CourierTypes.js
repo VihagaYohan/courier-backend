@@ -47,7 +47,7 @@ exports.addCourierType = async (req, res, next) => {
 exports.updateCourierType = async (req, res, next) => {
   const type = await CourierType.findByIdAndUpdate(req.param.id, req.body);
 
-  res.status(301).json({
+  res.status(200).json({
     status: true,
     data: type,
   });
