@@ -110,7 +110,6 @@ exports.addOrder = asyncHandler(async (req, res, next) => {
 
   const { error } = orderValidation(req.body);
   if (error) {
-    console.log(error);
     next(new ErrorResponse("Please provide valid details", 400));
   } else {
     // check for the order placed status
@@ -163,19 +162,25 @@ exports.getOrderStatusUpdate = asyncHandler(async (req, res, next) => {
 // @desc        Update order
 // @route       PUT /api/v1/orders
 // @access      Private
-exports.updateOrder = asyncHandler(async (req, res, next) => {
-  const result = await Order.findByIdAndUpdate(req.body.id, {
+exports.updateOrderStatus = asyncHandler(async (req, res, next) => {
+  const result = await Order.findByIdAndUpdate(req.params.id, {
     status: req.body.status.id,
   });
+  if (result != null) {
+    // return courier status name
+    const status = await CourierStates.findById(req.body.status.id);
 
-  return res
-    .status(200)
-    .json(
-      new SuccessResponse(
-        true,
-        `Courier # ${req.body.id} has been updated`,
-        200,
-        result
-      )
-    );
+    return res
+      .status(200)
+      .json(
+        new SuccessResponse(
+          true,
+          `Courier #${req.body.id} has been updated`,
+          200,
+          status.name
+        )
+      );
+  } else {
+    next(new ErrorResponse("Please provide order Id", 400));
+  }
 });
