@@ -32,6 +32,8 @@ const auth = require("./routes/auth");
 const courierStates = require("./routes/courierStatus");
 const paymentTypes = require("./routes/paymentType");
 const orders = require("./routes/order");
+const users = require("./routes/users");
+const orderLocation = require("./routes/orderLocation");
 
 // body pharser
 app.use(express.json());
@@ -50,27 +52,22 @@ app.use("/api/v1/auth", auth);
 app.use("/api/v1/courierStates", courierStates);
 app.use("/api/v1/paymentTypes", paymentTypes);
 app.use("/api/v1/orders", orders);
+app.use("/api/v1/users", users);
+app.use("/api/v1/orderLocation", orderLocation);
 
 // error handler middleware
 app.use(errorHandler);
 
 // connected clients
-var clients = {};
+var connectedUsers = {};
 
 // run socket
 io.on("connection", (socket) => {
-  // welcom current user
-  socket.emit("message", "welcome to real-time updates");
+  console.log(`${socket.id} has joined`);
 
-  // broadcast when a user connects. except connected user
-  socket.broadcast.emit("message", "A user has joined the server");
-
-  // broadcast to everyone
-  io.emit("");
-
-  // runs when client disconnects
-  socket.on("disconnect", () => {
-    io.emit("message", "A user has disconnected from the server");
+  // capture received client side event
+  socket.on("orderId", (orderId) => {
+    connectedUsers[orderId] = socket;
   });
 });
 

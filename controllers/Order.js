@@ -6,12 +6,13 @@ const asyncHandler = require("../middleware/asyncHandler");
 const ErrorResponse = require("../utils/ErrorResponse");
 const SuccessResponse = require("../utils/SuccessResponse");
 const OrderStatus = require("../constants/orderStates");
+const { generateId } = require("../utils/Helper");
 
 // @desc        Get all orders
 // @route       GET /api/v1/orders
 // @access      Private
 exports.getAllOrders = asyncHandler(async (req, res, next) => {
-  const orders = await Order.find().populate("paymenttype");
+  const orders = await Order.find().populate("paymentType");
   if (orders.length == 0) {
     next(new ErrorResponse("There are no orders at the moment", 404));
   } else {
@@ -60,7 +61,7 @@ exports.getAllOrdersForRider = asyncHandler(async (req, res, next) => {
     rider: req.params.id,
   })
     .populate("status", "-__v")
-    .populate("rider")
+    .populate("rider", "-__v")
     .populate("courierType", "_id, name")
     .populate("packageType", "_id, name")
     .populate("paymentType", "_id, name ")
@@ -121,6 +122,11 @@ exports.addOrder = asyncHandler(async (req, res, next) => {
     // assign default status id
     orderObj.statusId = statusList[0]?._id;
 
+    // assign order tracking Id
+    orderObj.trackingId = generateId().toString();
+
+    console.log(orderObj);
+
     let order = await Order.create(orderObj);
 
     return res.status(200).json({
@@ -150,5 +156,31 @@ exports.getOrderStatusUpdate = asyncHandler(async (req, res, next) => {
     return res
       .status(200)
       .json(new SuccessResponse(true, "Fetched order status", 200, order));
+  }
+});
+
+// @desc        Update order
+// @route       PUT /api/v1/orders
+// @access      Private
+exports.updateOrderStatus = asyncHandler(async (req, res, next) => {
+  const result = await Order.findByIdAndUpdate(req.params.id, {
+    status: req.body.status.id,
+  });
+  if (result != null) {
+    // return courier status name
+    const status = await CourierStates.findById(req.body.status.id);
+
+    return res
+      .status(200)
+      .json(
+        new SuccessResponse(
+          true,
+          `Courier #${req.body.id} has been updated`,
+          200,
+          status.name
+        )
+      );
+  } else {
+    next(new ErrorResponse("Please provide order Id", 400));
   }
 });
