@@ -12,7 +12,7 @@ const { generateId } = require("../utils/Helper");
 // @route       GET /api/v1/orders
 // @access      Private
 exports.getAllOrders = asyncHandler(async (req, res, next) => {
-  const orders = await Order.find().populate("paymenttype");
+  const orders = await Order.find().populate("paymentType");
   if (orders.length == 0) {
     next(new ErrorResponse("There are no orders at the moment", 404));
   } else {
