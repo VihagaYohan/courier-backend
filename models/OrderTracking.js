@@ -9,11 +9,11 @@ const orderTrackingSchema = mongoose.Schema({
     required: true,
   },
   latitude: {
-    type: String,
+    type: number,
     required: true,
   },
   longitude: {
-    type: String,
+    type: number,
     required: true,
   },
 });

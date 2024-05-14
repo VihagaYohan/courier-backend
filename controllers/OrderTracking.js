@@ -1,4 +1,4 @@
-const { OrderLocation } = require("../models/OrderLocation");
+const { OrderTracking } = require("../models/OrderTracking");
 const asyncHandler = require("../middleware/asyncHandler");
 const ErrorResponse = require("../utils/ErrorResponse");
 const SuccessResponse = require("../utils/SuccessResponse");
@@ -7,7 +7,7 @@ const SuccessResponse = require("../utils/SuccessResponse");
 // @route   GET /api/v1/packageTypes
 // @access  Private
 exports.updateOrderLocation = asyncHandler(async (req, res, next) => {
-  const orderLocation = await OrderLocation.findOne({
+  const orderLocation = await OrderTracking.findOne({
     orderId: req.body.orderId,
   });
 
