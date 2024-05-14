@@ -33,6 +33,7 @@ const courierStates = require("./routes/courierStatus");
 const paymentTypes = require("./routes/paymentType");
 const orders = require("./routes/order");
 const users = require("./routes/users");
+const orderLocation = require("./routes/orderLocation");
 
 // body pharser
 app.use(express.json());
@@ -52,6 +53,7 @@ app.use("/api/v1/courierStates", courierStates);
 app.use("/api/v1/paymentTypes", paymentTypes);
 app.use("/api/v1/orders", orders);
 app.use("/api/v1/users", users);
+app.use("/api/v1/orderLocation", orderLocation);
 
 // error handler middleware
 app.use(errorHandler);
