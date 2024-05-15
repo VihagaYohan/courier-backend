@@ -9,16 +9,16 @@ const orderTrackingSchema = mongoose.Schema({
     required: true,
   },
   latitude: {
-    type: number,
+    type: Number,
     required: true,
   },
   longitude: {
-    type: number,
+    type: Number,
     required: true,
   },
 });
 
-const OrderTracking = new mongoose.model("OrderTracking", OrderTracking);
+const OrderTracking = new mongoose.model("OrderTracking", orderTrackingSchema);
 
 module.exports = {
   OrderTracking,
