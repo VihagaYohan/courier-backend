@@ -2,6 +2,7 @@ const { Sender, senderValidation } = require("../models/Sender");
 const { Receiver, receiverValidation } = require("../models/Receiver");
 const { Order, orderValidation } = require("../models/Order");
 const CourierStates = require("../models/CourierStates");
+const User = require("../models/User");
 const asyncHandler = require("../middleware/asyncHandler");
 const ErrorResponse = require("../utils/ErrorResponse");
 const SuccessResponse = require("../utils/SuccessResponse");
@@ -210,5 +211,31 @@ exports.getOrderById = asyncHandler(async (req, res, next) => {
           order
         )
       );
+  }
+});
+
+// @desc        Update delivery rider
+// @route       PUT /api/v1/orders/rider/:Id
+// @access      Private
+exports.updateOrderStatus = asyncHandler(async (req, res, next) => {
+  const result = await Order.findByIdAndUpdate(req.params.id, {
+    rider: req.body.riderId,
+  });
+  if (result != null) {
+    // return courier status name
+    const status = await User.findById(req.body.riderId);
+
+    return res
+      .status(200)
+      .json(
+        new SuccessResponse(
+          true,
+          `Courier #${req.body.id} has been updated`,
+          200,
+          status.name
+        )
+      );
+  } else {
+    next(new ErrorResponse("Please provide order Id", 400));
   }
 });

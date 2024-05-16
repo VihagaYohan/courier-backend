@@ -12,3 +12,14 @@ exports.getAllUsers = asyncHandler(async (req, res, next) => {
     .status(200)
     .json(new SuccessResponse(true, "Fetch all users", 200, users));
 });
+
+// @desc        Delete a user
+// @route       Delete /api/v1/users/:id
+// @access      Public
+exports.deleteUser = asyncHandler(async (req, res, next) => {
+  await User.findByIdAndDelete(req.params.id);
+
+  return res
+    .status(200)
+    .json(new SuccessResponse(true, "User deleted", 200, ""));
+});
