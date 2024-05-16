@@ -184,3 +184,31 @@ exports.updateOrderStatus = asyncHandler(async (req, res, next) => {
     next(new ErrorResponse("Please provide order Id", 400));
   }
 });
+
+// @desc        Get order by tracking number
+// @route       PUT /api/v1/orders/Id
+// @access      Private
+exports.getOrderById = asyncHandler(async (req, res, next) => {
+  const order = await Order.findOne({ trackingId: req.params.id })
+    .populate("status", "-__v")
+    .populate("rider", "-__v")
+    .populate("courierType", "_id, name")
+    .populate("packageType", "_id, name")
+    .populate("paymentType", "_id, name ")
+    .sort({ createdOn: -1 });
+
+  if (!order) {
+    return next(new ErrorResponse("Please provide valid order Id", 400));
+  } else {
+    return res
+      .status(200)
+      .json(
+        new SuccessResponse(
+          true,
+          `Courier #${req.params.id} has been found`,
+          200,
+          order
+        )
+      );
+  }
+});
